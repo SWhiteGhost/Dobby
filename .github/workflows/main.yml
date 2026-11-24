@@ -13,13 +13,13 @@ jobs:
 
       - name: Parchear asm arm64
         run: |
-          for f in $(find . -name "closure_bridge_arm64.asm"); do
+          for f in $(grep -rl "@PAGE" --include="*.asm" --include="*.S" --include="*.s" .); do
             echo "Parcheando $f"
-            grep -n "PAGE" $f
             sed -i -E 's/([A-Za-z_0-9]+)@PAGEOFF/:lo12:\1/g; s/([A-Za-z_0-9]+)@PAGE/\1/g' $f
-            echo "--- despues ---"
             grep -n "lo12\|adrp" $f
           done
+          echo "--- quedan @PAGE? ---"
+          grep -rn "@PAGE" . --include="*.asm" || echo "ninguno"
 
       - name: Build arm64
         run: |
