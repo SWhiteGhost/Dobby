@@ -11,6 +11,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Parchear asm arm64
+        run: |
+          f=source/TrampolineBridge/ClosureTrampolineBridge/arm64/closure_bridge_arm64.asm
+          grep -n "PAGE" $f || true
+          sed -i -E 's/([A-Za-z_0-9]+)@PAGEOFF/:lo12:\1/g; s/([A-Za-z_0-9]+)@PAGE/\1/g' $f
+          grep -n "lo12\|adrp" $f || true
+
       - name: Build arm64
         run: |
           mkdir build && cd build
